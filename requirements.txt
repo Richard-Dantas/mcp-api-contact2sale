@@ -1,0 +1,5 @@
+sqlalchemy
+psycopg2-binary
+faker
+rich  # para deixar bonito no terminal
+openai  # se quiser brincar com LLM, dependendo
