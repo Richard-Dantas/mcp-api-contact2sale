@@ -1,4 +1,22 @@
+version: '3.8'
+
 services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    entrypoint: ["sh", "-c"]
+    command: >
+      "
+      ollama serve &
+      sleep 5 &&
+      ollama pull llama3 &&
+      tail -f /dev/null
+      "
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_models:/root/.ollama
+
   db:
     image: postgres:15
     environment:
@@ -16,15 +34,38 @@ services:
       retries: 5
 
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mcp-api-app
     depends_on:
       db:
         condition: service_healthy
-    env_file:
-      - .env  # <<<< Adiciona isso
-    command: python main.py
+    environment:
+      - DATABASE_URL=postgresql://user:password@db:5432/cars_db
+      - OLLAMA_API_URL=http://ollama:11434/api/generate
+      - OLLAMA_MODEL_NAME=llama3
+    volumes:
+      - type: bind
+        source: .
+        target: /app
+        consistency: cached
+    working_dir: /app
     ports:
       - "8000:8000"
+    stdin_open: true
+    tty: true
+    command: ["python", "main.py"]
+
+  # mcp-server:
+  #   build:
+  #     context: .
+  #     dockerfile: mcp_server/Dockerfile
+  #   stdin_open: true
+  #   tty: true
+  #   depends_on:
+  #     - app
 
 volumes:
   postgres_data:
+  ollama_models:

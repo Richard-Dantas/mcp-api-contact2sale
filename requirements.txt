@@ -1,5 +1,9 @@
 sqlalchemy
 psycopg2-binary
 faker
-rich  # para deixar bonito no terminal
+requests>=2.31.0
+websockets
 openai  # se quiser brincar com LLM, dependendo
+fastmcp
+anthropic
+python-dotenv
