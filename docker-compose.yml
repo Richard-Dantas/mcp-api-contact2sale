@@ -16,6 +16,8 @@ services:
       - "11434:11434"
     volumes:
       - ollama_models:/root/.ollama
+    networks:
+      - mcp-network
 
   db:
     image: postgres:15
@@ -32,8 +34,10 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - mcp-network
 
-  app:
+  api:
     build:
       context: .
       dockerfile: Dockerfile
@@ -53,9 +57,48 @@ services:
     working_dir: /app
     ports:
       - "8000:8000"
+    # stdin_open: true
+    # tty: true
+    command: uvicorn main:app --host 0.0.0.0 --port 8000
+    networks:
+      - mcp-network
+
+  terminal:
+    build:
+      context: .
+    container_name: mcp-terminal
+    command: python terminal_runner.py
+    depends_on:
+      db:
+        condition: service_healthy
     stdin_open: true
     tty: true
-    command: ["python", "main.py"]
+    networks:
+      - mcp-network
+
+  # app:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   container_name: mcp-api-app
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   environment:
+  #     - DATABASE_URL=postgresql://user:password@db:5432/cars_db
+  #     - OLLAMA_API_URL=http://ollama:11434/api/generate
+  #     - OLLAMA_MODEL_NAME=llama3
+  #   volumes:
+  #     - type: bind
+  #       source: .
+  #       target: /app
+  #       consistency: cached
+  #   working_dir: /app
+  #   ports:
+  #     - "8000:8000"
+  #   stdin_open: true
+  #   tty: true
+  #   command: ["python", "main.py"]
 
   # mcp-server:
   #   build:
@@ -69,3 +112,7 @@ services:
 volumes:
   postgres_data:
   ollama_models:
+
+networks:
+  mcp-network:
+    driver: bridge

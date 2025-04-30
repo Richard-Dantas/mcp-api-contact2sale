@@ -55,7 +55,10 @@ class MCPService:
             if not tool_name:
                 return "Nenhuma ferramenta foi selecionada pelo modelo."
             
-            raw_response = await self.client.call_tool(tool_name, parameters)
+            try:
+                raw_response = await self.client.call_tool(tool_name, parameters)
+            except Exception as e:
+                return f"Erro ao executar a ferramenta '{tool_name}': {e}"
 
             beautify_prompt = f"""
                 Você é um assistente virtual de veículos que costuma retornar para o usuários os veículos que ele consultou.

@@ -4,7 +4,7 @@ from src.infrastructure.database.database import SessionLocal
 
 fake = Faker()
 
-def populate_vehicles(count=100):
+async def populate_vehicles(count=100):
     session = SessionLocal()
 
     for _ in range(count):
@@ -22,5 +22,5 @@ def populate_vehicles(count=100):
         )
         session.add(vehicle)
 
-    session.commit()
-    session.close()
+    await session.commit()
+    await session.close()
