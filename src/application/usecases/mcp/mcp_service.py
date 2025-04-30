@@ -44,7 +44,6 @@ class MCPService:
 
             model_reply = output.get("response", "").strip()
             try:
-                print(f"RESPOSTA GERADA PELO OLLAMA:\n{model_reply}")
                 action = json.loads(model_reply)
             except json.JSONDecodeError:
                 return f"Resposta inválida do modelo: {model_reply}"
@@ -132,8 +131,6 @@ Pergunta do usuário: "{user_prompt}"
             "prompt": prompt,
             "stream": False
         }
-
-        print(prompt)
 
         async with httpx.AsyncClient() as client:
             response = await client.post(

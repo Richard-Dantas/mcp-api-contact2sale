@@ -1,10 +1,7 @@
 import asyncio
-from fastapi import FastAPI
-import uvicorn
 from src.infrastructure.database.database import Base, async_engine
 from src.infrastructure.database.populate import populate_vehicles
 from src.application.usecases.mcp.mcp_service import MCPService
-from src.presentation.controllers.vehicle_controller import router
 
 async def setup_database():
     print(f"Conectando no banco: {async_engine.url}")
@@ -18,7 +15,7 @@ async def seed_data():
     print("Banco populado com sucesso!")
 
 async def start_terminal_agent():
-    print("\nIniciando agente virtual via MCP + HuggingFace...")
+    print("\nIniciando agente virtual via MCP")
 
     service = MCPService()
 
@@ -35,16 +32,6 @@ async def start_terminal_agent():
             print(f"Agente: {resposta}\n")
         except Exception as e:
             print(f"Erro ao processar a pergunta: {e}")
-
-async def lifespan(app: FastAPI):
-    print("🚀 Lifespan started")
-    # Aqui você pode configurar banco, logger, caches, etc.
-    # Por exemplo: db = setup_database(); app.state.db = db
-    yield
-    print("🧹 Lifespan shutdown")
-
-app = FastAPI(lifespan=lifespan)
-app.include_router(router)
 
 async def main():
     await setup_database()

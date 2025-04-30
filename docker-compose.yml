@@ -57,8 +57,6 @@ services:
     working_dir: /app
     ports:
       - "8000:8000"
-    # stdin_open: true
-    # tty: true
     command: uvicorn main:app --host 0.0.0.0 --port 8000
     networks:
       - mcp-network
@@ -75,39 +73,6 @@ services:
     tty: true
     networks:
       - mcp-network
-
-  # app:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   container_name: mcp-api-app
-  #   depends_on:
-  #     db:
-  #       condition: service_healthy
-  #   environment:
-  #     - DATABASE_URL=postgresql://user:password@db:5432/cars_db
-  #     - OLLAMA_API_URL=http://ollama:11434/api/generate
-  #     - OLLAMA_MODEL_NAME=llama3
-  #   volumes:
-  #     - type: bind
-  #       source: .
-  #       target: /app
-  #       consistency: cached
-  #   working_dir: /app
-  #   ports:
-  #     - "8000:8000"
-  #   stdin_open: true
-  #   tty: true
-  #   command: ["python", "main.py"]
-
-  # mcp-server:
-  #   build:
-  #     context: .
-  #     dockerfile: mcp_server/Dockerfile
-  #   stdin_open: true
-  #   tty: true
-  #   depends_on:
-  #     - app
 
 volumes:
   postgres_data:

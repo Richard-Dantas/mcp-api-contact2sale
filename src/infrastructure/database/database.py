@@ -10,8 +10,6 @@ POSTGRES_PORT = os.getenv('DB_PORT', '5432')
 
 DATABASE_URL = f"postgresql+asyncpg://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
 
-print(f"Conectando no banco: {DATABASE_URL}")
-
 async_engine = create_async_engine(DATABASE_URL, echo=False, future=True)
 SessionLocal = async_sessionmaker(bind=async_engine , expire_on_commit=False, class_=AsyncSession)
 
